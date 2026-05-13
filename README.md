@@ -1,5 +1,7 @@
 # PHP Moderno — Guia de Estudos Aprofundados
 
+<a href="https://fabriciopa.com.br/artigos/php-studies" target="_blank">Artigo de referência.</a>
+
 Guia pessoal de 16 semanas para estudar PHP 8.3 / 8.4 com foco em back-end profundo: tipos, OOP moderno, padrões, DDD/Clean/Hexagonal, APIs maduras, performance e infraestrutura.
 
 Este repositório contém **dois artefatos** que se complementam:
