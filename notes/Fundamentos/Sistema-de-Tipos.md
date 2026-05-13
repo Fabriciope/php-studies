@@ -26,6 +26,10 @@ O modelo mental: o sistema é **nominal** para classes/interfaces (não estrutur
 
 **Comparação com TypeScript**: PHP carece de generics genuínos, tipos literais arbitrários (`'admin'|'user'`), tipos condicionais, mapped types e narrowing por type guard. Em compensação, runtime checks são reais e `TypeError` é determinístico. PHPStan/Psalm cobrem boa parte dos gaps via PHPDoc.
 
+**Resolução de tipos é em runtime**: ao contrário de Java/C# que apagam (erasure) ou reificam genéricos no bytecode, PHP **carrega cada tipo no metadata da função** e checa em cada chamada. Isso tem custo, mas é o que garante `TypeError` determinístico. O custo é compensado pelo OPcache ao cachear o resultado da análise para chamadas seguintes.
+
+**Tipos não impedem `null`**: por padrão, `function f(int $x)` **não** aceita null. Para aceitar, escreva `?int` (sugar para `int|null`) ou `int|null` literal. A diferença: `?int $x = null` torna o parâmetro opcional; `int|null $x` ainda exige passagem explícita. A partir de 8.1, omitir `?` mas default `= null` é deprecated — alinhe a sintaxe.
+
 ## Por que importa
 
 **Cenário 1 — Result type sem exception abuse**: modelar `findUser(int $id): User|UserNotFound` documenta no retorno que falha é possível, força `match` no caller e elimina `try/catch` de fluxo de controle. Sem union types, ou retorna `?User` (perde-se causa) ou lança exception (caro, polui stack trace para caso esperado).
@@ -35,6 +39,8 @@ O modelo mental: o sistema é **nominal** para classes/interfaces (não estrutur
 **Cenário 3 — funções que sempre lançam**: `function fail(string $m): never` permite que análise estática entenda que o código depois da chamada é **inalcançável**, eliminando falsos positivos sobre "variável possivelmente não inicializada" em branches.
 
 **Cenário 4 — APIs legadas com booleano de falha**: `mysqli::query()` retorna `mysqli_result|false`. Tipar caller como `mysqli_result|false` força tratar `false` antes de usar. Sem tipos literais, esse contrato era opaco.
+
+**Cenário 5 — variância em factories**: framework define `abstract class Repository { abstract public function findOne(): ?Entity; }`. Subclasse `UserRepository` quer retornar `?User`. Sem covariância de retorno, era impossível sem cast; com covariância, `: ?User` é override válido e o tipo permanece preciso para os consumidores.
 
 ## Exemplo de código PHP
 
@@ -169,6 +175,41 @@ function process(mixed $input): mixed { /* ... */ }
 // MELHOR — diz o que é
 function process(string|int|array $input): Order|OrderError { /* ... */ }
 ```
+
+**Generics simulados via PHPDoc (lidos por PHPStan/Psalm):**
+
+```php
+<?php
+declare(strict_types=1);
+
+/**
+ * @template T of object
+ */
+final class Collection {
+    /** @var list<T> */
+    private array $items = [];
+
+    /** @param T $item */
+    public function add(object $item): void {
+        $this->items[] = $item;
+    }
+
+    /** @return list<T> */
+    public function all(): array {
+        return $this->items;
+    }
+}
+
+/** @var Collection<User> $users */
+$users = new Collection();
+$users->add(new User(1));
+foreach ($users->all() as $u) {
+    // PHPStan sabe: $u é User
+    echo $u->id;
+}
+```
+
+Em runtime, é só `array`. Mas a análise estática enforça o tipo. Único caminho para generics em PHP hoje.
 
 **Tabela de tipos especiais:**
 
