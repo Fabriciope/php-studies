@@ -18,6 +18,7 @@ MOC (Map of Content) deste vault. Cada link aponta para uma nota individual. Tra
 - [[Fundamentos/Sistema-de-Tipos]]
 - [[Fundamentos/Hierarquia-Throwable]]
 - [[Fundamentos/Configuracao-PHP-INI]]
+- [[Fundamentos/Composer]]
 
 ## Fase 2 · OOP Moderno
 
