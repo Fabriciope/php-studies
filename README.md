@@ -5,7 +5,7 @@ Guia pessoal de 16 semanas para estudar PHP 8.3 / 8.4 com foco em back-end profu
 Este repositório contém **dois artefatos** que se complementam:
 
 - `index.html` — página estática com a visão geral do roadmap, fases, exemplos-chave e método de revisão.
-- `notes/` — vault Obsidian com ~39 notas individuais para estudo e revisão espaçada.
+- `notes/` — vault Obsidian com 40 notas individuais (média 250-400 linhas) para estudo e revisão espaçada.
 
 ## Estrutura
 
@@ -93,10 +93,12 @@ A página tem dark mode embutido, sidebar fixa de navegação, oito cards detalh
 
 ## Cobertura
 
-- **39 notas** distribuídas em 7 áreas
+- **40 notas** distribuídas em 7 áreas (Fundamentos · OOP-Moderno · Padroes · Arquitetura · APIs · Performance · Infra)
 - **8 fases** alinhadas com o cronograma
 - **PHP 8.3 / 8.4** como alvo (property hooks, asymmetric visibility, readonly classes)
 - Sem framework no caminho — PHP puro, padrões e infra
+- Cada nota segue 6 seções fixas: Conceito, Por que importa, Exemplo de código PHP, Quando usar, Armadilhas comuns, Links relacionados
+- Composer coberto em [[Fundamentos/Composer]]
 
 ## Licença
 
